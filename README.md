@@ -1,6 +1,6 @@
 # jjroom
   
   TODO List :
--  create frontend using ChatGPT (js and css)
+-  this is a code from this vid https://youtu.be/KrGfq0vXEkc
 
 
