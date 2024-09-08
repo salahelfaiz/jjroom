@@ -152,7 +152,7 @@ body{
   margin-top: 10px;
 }
 #chat_input{
-  width: 95%;
+  width: 80%;
   height: 100%;
   float: left;
   background-color: Transparent;
@@ -168,8 +168,23 @@ body{
   text-align: right;
   color: #ccc;
 }
+#chat_input_ai{
+  width: 5%;
+  height: 100%;
+  float: right;
+  font-size: 18px;
+  background-color: Transparent;
+  text-align: right;
+  color: #ccc;
+}
 #chat_input_send.enabled{
   color: #D64045;
+  background-color: Transparent;
+  cursor: pointer;
+
+}
+#chat_input_ai.enabled{
+  color: #7940d6;
   background-color: Transparent;
   cursor: pointer;
 

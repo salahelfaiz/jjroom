@@ -10,11 +10,14 @@ window.onload = function() {
   messagingSenderId: "319144555456",
   appId: "1:319144555456:web:57d788cf1628565096ce25"
 };
+
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
   // This is very IMPORTANT!! We're going to use "db" a lot.
   var db = firebase.database()
   // We're going to use oBjEcT OrIeNtEd PrOgRaMmInG. Lol
+
+
   class MEME_CHAT{
     // Home() is used to create the home page
     home(){
@@ -39,7 +42,7 @@ window.onload = function() {
 
       var title = document.createElement('h1')
       title.setAttribute('id', 'title')
-      title.textContent = 'MemeChat 2.0'
+      title.textContent = 'MemeChat 3.0'
 
       title_inner_container.append(title)
       title_container.append(title_inner_container)
@@ -147,6 +150,11 @@ window.onload = function() {
       chat_input_send.setAttribute('disabled', true)
       chat_input_send.innerHTML = `<i class="">send</i>`
 
+      var chat_input_ai = document.createElement('button')
+      chat_input_ai.setAttribute('id', 'chat_input_ai')
+      chat_input_ai.setAttribute('disabled', true)
+      chat_input_ai.innerHTML = `<i class="">AI</i>`
+
       var chat_input = document.createElement('input')
       chat_input.setAttribute('id', 'chat_input')
       // Only a max message length of 1000
@@ -156,6 +164,10 @@ window.onload = function() {
       chat_input.onkeyup  = function(){
         if(chat_input.value.length > 0){
           chat_input_send.removeAttribute('disabled')
+
+          chat_input_ai.classList.add('enabled')
+          chat_input_ai.removeAttribute('disabled')
+
           chat_input_send.classList.add('enabled')
           chat_input_send.onclick = function(){
             chat_input_send.setAttribute('disabled', true)
@@ -191,7 +203,7 @@ window.onload = function() {
       }
 
       chat_logout_container.append(chat_logout)
-      chat_input_container.append(chat_input, chat_input_send)
+      chat_input_container.append(chat_input, chat_input_send, chat_input_ai)
       chat_inner_container.append(chat_content_container, chat_input_container, chat_logout_container)
       chat_container.append(chat_inner_container)
       document.body.append(chat_container)
