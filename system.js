@@ -169,9 +169,15 @@ window.onload = function() {
           chat_input_ai.removeAttribute('disabled')
 
           chat_input_send.classList.add('enabled')
+
           chat_input_send.onclick = function(){
+
             chat_input_send.setAttribute('disabled', true)
             chat_input_send.classList.remove('enabled')
+
+            chat_input_ai.setAttribute('disabled', true)
+            chat_input_ai.classList.remove('enabled')
+
             if(chat_input.value.length <= 0){
               return
             }
@@ -179,6 +185,26 @@ window.onload = function() {
             parent.create_load('chat_content_container')
             // Send the message. Pass in the chat_input.value
             parent.send_message(chat_input.value)
+            // Clear the chat input box
+            chat_input.value = ''
+            // Focus on the input just after
+            chat_input.focus()
+          }
+
+          chat_input_ai.onclick = function(){
+            chat_input_send.setAttribute('disabled', true)
+            chat_input_send.classList.remove('enabled')
+
+            chat_input_ai.setAttribute('disabled', true)
+            chat_input_ai.classList.remove('enabled')
+            if(chat_input.value.length <= 0){
+              return
+            }
+            // Enable the loading circle in the 'chat_content_container'
+            parent.create_load('chat_content_container')
+            // Send the message. Pass in the chat_input.value
+            parent.send_message(chat_input.value)
+            parent.ask_ai(chat_input.value)
             // Clear the chat input box
             chat_input.value = ''
             // Focus on the input just after
@@ -217,6 +243,7 @@ window.onload = function() {
       // Save name to localStorage
       localStorage.setItem('name', name)
     }
+
     // Sends message/saves the message to firebase database
     send_message(message){
       var parent = this
@@ -243,6 +270,83 @@ window.onload = function() {
         })
       })
     }
+
+    // Function to send message to GPT-3.5-turbo and get the response
+    async getGPT3Response(message) {
+      const apiKey = 'APIKEY'; // Replace with your actual OpenAI API key
+
+      const url = 'https://api.openai.com/v1/chat/completions';
+
+      // Prepare the request body
+      const requestBody = {
+          model: "gpt-3.5-turbo",
+          messages: [
+              {
+                  role: "user",
+                  content: message
+              }
+          ],
+          max_tokens: 100, // Adjust token limit based on your need
+          temperature: 0.7 // Controls randomness, between 0 and 1 (more = creative, less = focused)
+      };
+
+      try {
+          const response = await fetch(url, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${apiKey}`
+              },
+              body: JSON.stringify(requestBody)
+          });
+
+          if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const data = await response.json();
+
+          // Get the assistant's reply from the response
+          const gptMessage = data.choices[0].message.content;
+          console.log("GPT-3.5 Response:", gptMessage);
+
+          return gptMessage; // Return the GPT response
+      } catch (error) {
+          console.error('Error fetching GPT-3.5 response:', error);
+          return null;
+      }
+    }
+
+
+    // Sends message/saves the message to firebase database
+    async ask_ai(message){
+      var parent = this
+      // if the local storage name is null and there is no message
+      // then return/don't send the message. The user is somehow hacking
+      // to send messages. Or they just deleted the
+      // localstorage themselves. But hacking sounds cooler!!
+      if(parent.get_name() == null && message == null){
+        return
+      }
+
+      const gptResponse = await parent.getGPT3Response(message);
+
+      // Get the firebase database value
+      db.ref('chats/').once('value', function(message_object) {
+        // This index is mortant. It will help organize the chat in order
+        var index = parseFloat(message_object.numChildren()) + 1
+        db.ref('chats/' + `message_${index}`).set({
+          name: "BOT",
+          message: gptResponse,
+          index: index
+        })
+        .then(function(){
+          // After we send the chat refresh to get the new messages
+          parent.refresh_chat()
+        })
+      })
+    }
+
     // Get name. Gets the username from localStorage
     get_name(){
       // Get the name from localstorage
@@ -313,7 +417,11 @@ window.onload = function() {
           message_user_container.setAttribute('class', 'message_user_container')
 
           var message_user = document.createElement('p')
-          message_user.setAttribute('class', 'message_user')
+          if (name == "BOT"){
+            message_user.setAttribute('class', 'message_bot')
+          }else{
+            message_user.setAttribute('class', 'message_user')
+          }
           message_user.textContent = `${name}`
 
           var message_content_container = document.createElement('div')

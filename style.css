@@ -227,6 +227,11 @@ body{
   font-weight: bold;
   font-size: 14px;
 }
+.message_bot{
+  color: #7940d6;
+  font-weight: bold;
+  font-size: 14px;
+}
 .message_content_container{
   width: 100%;
   display: inline-block;
