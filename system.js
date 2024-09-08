@@ -2,14 +2,14 @@
 // So we don't have ridiculous errors.
 window.onload = function() {
   // Your web app's Firebase configuration
-  var firebaseConfig = {
-    apiKey: "",
-    authDomain: "",
-    projectId: "",
-    storageBucket: "",
-    messagingSenderId: "",
-    appId: ""
-  };
+  const firebaseConfig = {
+  apiKey: "AIzaSyAFHiK27VthygUdHjiTV3ABE0zXJRHMPDY",
+  authDomain: "jjroom.firebaseapp.com",
+  projectId: "jjroom",
+  storageBucket: "jjroom.appspot.com",
+  messagingSenderId: "319144555456",
+  appId: "1:319144555456:web:57d788cf1628565096ce25"
+};
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
   // This is very IMPORTANT!! We're going to use "db" a lot.
