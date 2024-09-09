@@ -8,6 +8,23 @@ body{
   animation: blur 0.5s ease-out;
 
 }
+
+
+#online_users_counter {
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 14px; /* Change font size */
+  font-family: 'Arial', sans-serif; /* Change font family */
+  font-weight: bold; /* Change font weight */
+  font-style: italic; /* Change font style */
+  color: #ffeb3b; /* Change font color */
+}
+
 *{
   outline: none;
   border: none;

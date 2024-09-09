@@ -23,7 +23,7 @@ window.onload = function() {
     home(){
       // First clear the body before adding in
       // a title and the join form
-      document.body.innerHTML = ''
+            document.body.innerHTML = ''
       this.create_title()
       this.create_join_form()
     }
@@ -296,6 +296,37 @@ window.onload = function() {
       });
     }
     
+    setup_presence() {
+      var parent = this;
+      var userRef = db.ref(`/status/${parent.get_name()}`);
+
+      db.ref('.info/connected').on('value', function(snapshot) {
+        if (snapshot.val() == false) {
+          return;
+        };
+
+        userRef.onDisconnect().remove();
+
+        userRef.set(true);
+      });
+
+      db.ref('status').on('value', function(snapshot) {
+        var onlineUsers = snapshot.numChildren();
+        document.getElementById('online_users_counter').textContent = `Online Users: ${onlineUsers}`;
+      });
+    }
+
+    update_presence(status) {
+      var parent = this;
+      var userRef = db.ref(`/status/${parent.get_name()}`);
+      userRef.set(status);
+    }
+
+
+    
+
+  
+    
     
     // Function to send message to GPT-3.5-turbo and get the response
     async getGPT3Response(message) {
@@ -343,7 +374,7 @@ window.onload = function() {
           return null;
       }
     }
-
+    
 
     // Sends message/saves the message to firebase database
     async ask_ai(message){
@@ -478,5 +509,7 @@ window.onload = function() {
   // Go to home.
   if(app.get_name() != null){
     app.chat()
+    app.setup_presence()
+    app.update_presence(true)
   }
 }

@@ -1,6 +1,6 @@
 # jjroom
   
   TODO List :
--  this is a code from this vid https://youtu.be/KrGfq0vXEkc
-
+-  implement AI using open ai api
+-   add online users counter 
 
