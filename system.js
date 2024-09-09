@@ -271,9 +271,36 @@ window.onload = function() {
       })
     }
 
+    getApiKey() {
+      return new Promise((resolve, reject) => {
+        db.ref('config/').on('value', function(messages_object) {
+          // Extract the data from the snapshot
+          const data = messages_object.val();
+          
+          // Check if data is not null and is an object
+          if (data && typeof data === 'object') {
+            // Check if the specific ID 'api_key' exists
+            if (data['api_key']) {
+              // Get the value of the object with ID 'api_key'
+              const apiKeyValue = data['api_key'];
+              
+              // Resolve the promise with the API key value
+              resolve(apiKeyValue.key);
+            } else {
+              reject('No data found for ID "api_key"');
+            }
+          } else {
+            reject('No data available');
+          }
+        });
+      });
+    }
+    
+    
     // Function to send message to GPT-3.5-turbo and get the response
     async getGPT3Response(message) {
-      const apiKey = 'APIKEY'; // Replace with your actual OpenAI API key
+     
+      const apiKey = await this.getApiKey();
 
       const url = 'https://api.openai.com/v1/chat/completions';
 
