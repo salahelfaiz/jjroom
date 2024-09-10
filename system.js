@@ -9,7 +9,7 @@ window.onload = function() {
   storageBucket: "jjroom.appspot.com",
   messagingSenderId: "319144555456",
   appId: "1:319144555456:web:57d788cf1628565096ce25"
-};
+  };
 
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
@@ -23,7 +23,7 @@ window.onload = function() {
     home(){
       // First clear the body before adding in
       // a title and the join form
-            document.body.innerHTML = ''
+      document.body.innerHTML = ''
       this.create_title()
       this.create_join_form()
     }
@@ -31,6 +31,13 @@ window.onload = function() {
     chat(){
       this.create_title()
       this.create_chat()
+      this.create_counter()
+    }
+    create_counter(){
+      var counter_container = document.createElement('div')
+      counter_container.setAttribute('id', 'online_users_counter')
+      counter_container.textContent = ''
+      document.body.append(counter_container)
     }
     // create_title() is used to create the title
     create_title(){
@@ -88,6 +95,7 @@ window.onload = function() {
             // parent = this. But it is not the join_button
             // It is (MEME_CHAT = this).
             parent.create_chat()
+            location.reload()
           }
         }else{
           // If the join_input is empty then turn off the
@@ -121,7 +129,7 @@ window.onload = function() {
       loader_container.append(loader)
       container.append(loader_container)
 
-    }
+    } 
     // create_chat() creates the chat container and stuff
     create_chat(){
       // Again! You need to have (parent = this)
@@ -322,14 +330,11 @@ window.onload = function() {
       userRef.set(status);
     }
 
-
-    
-
-  
-    
-    
+   
     // Function to send message to GPT-3.5-turbo and get the response
     async getGPT3Response(message) {
+
+      chatHistory.push({ role: "user", content: message })
      
       const apiKey = await this.getApiKey();
 
@@ -338,12 +343,7 @@ window.onload = function() {
       // Prepare the request body
       const requestBody = {
           model: "gpt-3.5-turbo",
-          messages: [
-              {
-                  role: "user",
-                  content: message
-              }
-          ],
+          messages: chatHistory,
           max_tokens: 100, // Adjust token limit based on your need
           temperature: 0.7 // Controls randomness, between 0 and 1 (more = creative, less = focused)
       };
@@ -367,7 +367,7 @@ window.onload = function() {
           // Get the assistant's reply from the response
           const gptMessage = data.choices[0].message.content;
           console.log("GPT-3.5 Response:", gptMessage);
-
+          chatHistory.push({ role: "assistant", content: gptMessage });
           return gptMessage; // Return the GPT response
       } catch (error) {
           console.error('Error fetching GPT-3.5 response:', error);
@@ -424,6 +424,7 @@ window.onload = function() {
         // When we get the data clear chat_content_container
         chat_content_container.innerHTML = ''
         // if there are no messages in the chat. Retrun . Don't load anything
+        
         if(messages_object.numChildren() == 0){
           return
         }
@@ -436,14 +437,13 @@ window.onload = function() {
         var guide = [] // this will be our guide to organizing the messages
         var unordered = [] // unordered messages
         var ordered = [] // we're going to order these messages
-
+        
         for (var i, i = 0; i < messages.length; i++) {
           // The guide is simply an array from 0 to the messages.length
           guide.push(i+1)
           // unordered is the [message, index_of_the_message]
           unordered.push([messages[i], messages[i].index]);
         }
-
         // Now this is straight up from stack overflow 🤣
         // Sort the unordered messages by the guide
         guide.forEach(function(key) {
@@ -502,14 +502,29 @@ window.onload = function() {
 
     }
   }
+
+
+
+
   // So we've "built" our app. Let's make it work!!
   var app = new MEME_CHAT()
   // If we have a name stored in localStorage.
   // Then use that name. Otherwise , if not.
   // Go to home.
+  var chatHistory = []
   if(app.get_name() != null){
     app.chat()
     app.setup_presence()
     app.update_presence(true)
   }
+
+
+  db.ref('status').on('value', function(snapshot) {
+    var onlineUsers = snapshot.numChildren();
+    // document.getElementById('online_users_counter').textContent = `Online Users: ${onlineUsers} `;
+    var myDict = snapshot.val()
+    new_online_users = Object.keys(myDict);  // Get the keys (user IDs) from the object
+    document.getElementById('online_users_counter').textContent = `${onlineUsers} Online Users : ${new_online_users.join('-')} `;
+
+  });
 }
