@@ -3,12 +3,13 @@
 window.onload = function() {
   // Your web app's Firebase configuration
   const firebaseConfig = {
-  apiKey: "AIzaSyAFHiK27VthygUdHjiTV3ABE0zXJRHMPDY",
-  authDomain: "jjroom.firebaseapp.com",
-  projectId: "jjroom",
-  storageBucket: "jjroom.appspot.com",
-  messagingSenderId: "319144555456",
-  appId: "1:319144555456:web:57d788cf1628565096ce25"
+    apiKey: "AIzaSyA2jLwwz24qDR0CDY_FK3M5y-u8GmpuXGw",
+    authDomain: "jjroom-b56e1.firebaseapp.com",
+    databaseURL: "https://jjroom-b56e1-default-rtdb.firebaseio.com",
+    projectId: "jjroom-b56e1",
+    storageBucket: "jjroom-b56e1.appspot.com",
+    messagingSenderId: "696212521624",
+    appId: "1:696212521624:web:f7015b92a2f70c12f4c6ed"
   };
 
   // Initialize Firebase
@@ -284,7 +285,7 @@ window.onload = function() {
         db.ref('config/').on('value', function(messages_object) {
           // Extract the data from the snapshot
           const data = messages_object.val();
-          
+
           // Check if data is not null and is an object
           if (data && typeof data === 'object') {
             // Check if the specific ID 'api_key' exists
@@ -293,7 +294,7 @@ window.onload = function() {
               const apiKeyValue = data['api_key'];
               
               // Resolve the promise with the API key value
-              resolve(apiKeyValue.key);
+              resolve(apiKeyValue);
             } else {
               reject('No data found for ID "api_key"');
             }
